@@ -1,23 +1,15 @@
-node('master') 
-{
-    stage('Continuous Download') 
-	{
-    git 'https://github.com/sunildevops77/maven.git'
-	}
-    stage('Continuous Build') 
-	{
-    sh label: '', script: 'mvn package'
-	}
-    stage('Continuous Deployment') 
-	{
-sh label: '', script: 'scp /home/ubuntu/.jenkins/workspace/ScriptedPipeline/webapp/target/webapp.war   ubuntu@172.31.26.217:/var/lib/tomcat8/webapps/qaenv.war'
-	}
-    stage('Continuous Testing') 
-	{
-              sh label: '', script: 'echo "Testing Passed"'
-	}
-    stage('Continuous Delivery') 
-	{
-sh label: '', script: 'scp /home/ubuntu/.jenkins/workspace/ScriptedPipeline/webapp/target/webapp.war   ubuntu@172.31.22.88:/var/lib/tomcat8/webapps/prodenv.war'
-	}
+node {
+    stage('cont.download') {
+    git 'https://github.com/venkat9822891/maven-project1.git'
+}
+    stage('cont.build') {
+    sh 'mvn package'
+}
+    stage('cont.deployment') {
+    deploy adapters: [tomcat8(credentialsId: '3f09ca4c-3eb9-4dea-a467-c8a06e8436f4', path: '', url: 'http://172.31.45.215:8080')], contextPath: '/devops-app', war: '**/*.war'
+}
+    stage('cont.deployment-test'){
+        deploy adapters: [tomcat8(credentialsId: 'f552cd72-0ce9-41b3-8f38-f814d5846b42', path: '', url: 'http://172.31.35.170:8080')], contextPath: '/devops-app', war: '**/*.war'
+                                }
+    
 }
